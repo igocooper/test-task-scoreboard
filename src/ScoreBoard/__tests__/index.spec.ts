@@ -115,6 +115,31 @@ describe('ScoreBoard', () => {
     });
 
     describe('getSummary', () => {
+      test('it return matches formatted summary', () => {
+        const scoreboard = new ScoreBoard();
+        scoreboard.startMatch('England', 'France');
 
+        expect(scoreboard.getSummary()).toEqual(['England 0 - France 0']);
+      });
+
+      test('it return matches summary ordered by total score', () => {
+        const scoreboard = new ScoreBoard();
+        scoreboard.startMatch('England', 'France');
+        scoreboard.startMatch('Spain', 'Italy');
+        scoreboard.updateScore('England 1 - France 3');
+        scoreboard.updateScore('Spain 2 - Italy 3');
+
+        expect(scoreboard.getSummary()).toEqual(['Spain 2 - Italy 3', 'England 1 - France 3']);
+      });
+
+      test('it return matches summary ordered by time match started if total score is same', () => {
+        const scoreboard = new ScoreBoard();
+        scoreboard.startMatch('England', 'France');
+        scoreboard.startMatch('Spain', 'Italy');
+        scoreboard.updateScore('England 1 - France 4');
+        scoreboard.updateScore('Spain 2 - Italy 3');
+
+        expect(scoreboard.getSummary()).toEqual(['England 1 - France 4', 'Spain 2 - Italy 3']);
+      });
     });
 });
