@@ -28,6 +28,10 @@ export class Match {
         this.homeTeam.score = homeTeamScore;
     }
 
+    getTotalScore() {
+        return this.homeTeam.score + this.awayTeam.score;
+    }
+
     static getTeamsFromId(id: string) {
         const [homeTeamName, awayTeamName] = id.split('-');
 

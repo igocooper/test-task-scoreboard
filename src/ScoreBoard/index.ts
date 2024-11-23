@@ -1,15 +1,23 @@
 import { Match, Team } from '../Match';
+import { SummaryLogger } from '../SummaryLogger';
+import { MatchFormatter } from "../MatchFormatter";
 import { handleScoreInstructionParsing } from './utils';
-
 
 export class ScoreBoard {
     liveMatches: Map<Match['id'], Match> = new Map();
     finishedMatches: Map<Match['id'], Match> = new Map();
     Match: typeof Match;
+    SummaryLogger: typeof SummaryLogger;
+    MatchFormatter: typeof MatchFormatter;
 
-    constructor(match?: typeof Match) {
-        // we allow users to come with better hashing pattern for match ids as long as he implements Match interface
+    constructor({ match, summaryLogger, matchFormatter }: {
+        match?: typeof Match;
+        summaryLogger?: typeof SummaryLogger
+        matchFormatter?: typeof MatchFormatter
+    } = {}) {
         this.Match = match || Match;
+        this.SummaryLogger = summaryLogger || SummaryLogger;
+        this.MatchFormatter = matchFormatter || MatchFormatter;
     }
 
     startMatch(homeTeamName: Team['name'], awayTeamName: Team['name']) {
@@ -63,7 +71,10 @@ export class ScoreBoard {
     }
 
     getSummary() {
+        const summaryLogger = new this.SummaryLogger();
+        const matchFormatter = new this.MatchFormatter();
+        const orderedMatchSummary = summaryLogger.sort(Array.from(this.liveMatches.values()));
 
-      return []
+        return orderedMatchSummary.map(matchFormatter.format);
     }
 }
