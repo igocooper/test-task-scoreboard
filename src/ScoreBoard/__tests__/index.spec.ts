@@ -6,16 +6,25 @@ describe('ScoreBoard', () => {
             const scoreboard = new ScoreBoard();
             scoreboard.startMatch('Italy', 'France');
 
-            expect(scoreboard.matches).toHaveLength(1);
+            expect(scoreboard.liveMatches.size).toBe(1);
         });
 
         describe('when match with provided team already started', () => {
-            test.only('raises error that Team is playing already', () => {
+            test('raises error that Home team is playing already', () => {
                 const scoreboard = new ScoreBoard();
                 scoreboard.startMatch('Italy', 'England');
 
                 expect(() => {
                     scoreboard.startMatch('Italy', 'France');
+                }).toThrow('Team: Italy is playing already');
+            });
+
+            test('raises error that Away team is playing already', () => {
+                const scoreboard = new ScoreBoard();
+                scoreboard.startMatch('Italy', 'England');
+
+                expect(() => {
+                    scoreboard.startMatch('France', 'Italy');
                 }).toThrow('Team: Italy is playing already');
             });
 
@@ -37,31 +46,21 @@ describe('ScoreBoard', () => {
             scoreboard.startMatch('Italy', 'France');
             scoreboard.startMatch('England', 'Spain');
 
-            scoreboard.finishMatch('Italy - France');
+            scoreboard.finishMatch('Italy', 'France');
 
-            expect(scoreboard.matches).toHaveLength(1);
+            expect(scoreboard.finishedMatches.size).toBe(1);
+            expect(scoreboard.liveMatches.size).toBe(1);
         });
 
 
         describe('when match with provided home team could not be found', () => {
-            test('raises error that match with such a home team was not started', () => {
+            test('raises error that match with such teams was not started', () => {
                 const scoreboard = new ScoreBoard();
                 scoreboard.startMatch('England', 'France');
 
                 expect(() => {
-                    scoreboard.finishMatch('Italy - France');
-                }).toThrow('No match with that home team was started yet.');
-            });
-        });
-
-        describe('when match with provided away team could not be found', () => {
-            test('raises error that match with such a home team was not started', () => {
-                const scoreboard = new ScoreBoard();
-                scoreboard.startMatch('England', 'France');
-
-                expect(() => {
-                    scoreboard.finishMatch('England - Italy');
-                }).toThrow('No match with that away team was started yet.');
+                    scoreboard.finishMatch('Italy', 'France');
+                }).toThrow('No match with those teams was started yet.');
             });
         });
 
