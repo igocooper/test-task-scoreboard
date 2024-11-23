@@ -1,4 +1,5 @@
 import { Match, Team } from '../Match';
+import { handleScoreInstructionParsing } from './utils';
 
 
 export class ScoreBoard {
@@ -12,7 +13,7 @@ export class ScoreBoard {
     }
 
     startMatch(homeTeamName: Team['name'], awayTeamName: Team['name']) {
-        const match = new Match(homeTeamName, awayTeamName);
+        const match = new this.Match(homeTeamName, awayTeamName);
 
         if (this.liveMatches.has(match.id)) {
             throw new Error('Both Teams: Italy and France are playing already');
@@ -32,10 +33,11 @@ export class ScoreBoard {
 
         this.liveMatches.set(match.id, match);
 
+        return match;
     }
 
     finishMatch(homeTeamName: Team['name'], awayTeamName: Team['name']) {
-        const { id: matchId } = new Match(homeTeamName, awayTeamName);
+        const { id: matchId } = new this.Match(homeTeamName, awayTeamName);
 
         if (!this.liveMatches.has(matchId)) {
             throw new Error('No match with those teams was started yet.');
@@ -48,6 +50,16 @@ export class ScoreBoard {
 
     updateScore(scoreInstruction: string) {
 
+        const { homeTeamName, homeTeamScore, awayTeamName, awayTeamScore } = handleScoreInstructionParsing(scoreInstruction);
+
+        const { id: matchId } = new this.Match(homeTeamName, awayTeamName);
+        const match = this.liveMatches.get(matchId);
+
+        if (!match) {
+            throw new Error('No match with those teams was started yet.');
+        }
+
+        match.updateScore(parseInt(homeTeamScore), parseInt(awayTeamScore));
     }
 
     getSummary() {

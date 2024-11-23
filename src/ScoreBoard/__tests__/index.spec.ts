@@ -69,21 +69,30 @@ describe('ScoreBoard', () => {
     describe('updateScore', () => {
         test('updates score', () => {
             const scoreboard = new ScoreBoard();
-            scoreboard.startMatch('England', 'France');
+            const match = scoreboard.startMatch('England', 'France');
 
             scoreboard.updateScore('England 0 - France 1');
 
-            expect(scoreboard.liveMatches[0].homeTeam.score).toBe(0);
-            expect(scoreboard.liveMatches[0].awayTeam.score).toBe(1);
+            expect(match.homeTeam.score).toBe(0);
+            expect(match.awayTeam.score).toBe(1);
         });
+
+      test('throw generic error when score instruction is not satisfying pattern', () => {
+        const scoreboard = new ScoreBoard();
+        scoreboard.startMatch('England', 'France');
+
+        expect(() => {
+          scoreboard.updateScore('agaghafdshfg');
+        }).toThrow('Score instruction parsing error. Please make sure you are using correct format: "{homeTeamName} {homeTeamScore} - {awayTeamName} {awayTeamScore}');
+      });
 
         describe('when score instruction pattern is not recognised', () => {
             test.each([
-                [undefined, 0, 'France', 0, 'Cannot parse "homeTeamName". Please make sure you are using correct format: "${homeTeamName} ${homeTeamScore} - ${awayTeamName} ${awayTeamScore}"'],
-                ['England', undefined, 'France', 0, 'Cannot parse "homeTeamScore". Please make sure you are using correct format: "${homeTeamName} ${homeTeamScore} - ${awayTeamName} ${awayTeamScore}"'],
-                ['England', 0, undefined, 0, 'Cannot parse "awayTeamName". Please make sure you are using correct format: "${homeTeamName} ${homeTeamScore} - ${awayTeamName} ${awayTeamScore}"'],
-                ['England', 0, 'France', undefined, 'Cannot parse "awayTeamScore". Please make sure you are using correct format: "${homeTeamName} ${homeTeamScore} - ${awayTeamName} ${awayTeamScore}"'],
-            ])('it throw error that shows missing part and reminds required format', (homeTeamName, homeTeamScore, awayTeamName, awayTeamScore, expectedError) => {
+                ['', 0, 'France', 0, 'Cannot parse "homeTeamName". Please make sure you are using correct format: "{homeTeamName} {homeTeamScore} - {awayTeamName} {awayTeamScore}"'],
+                ['England', '', 'France', 0, 'Cannot parse "homeTeamScore". Please make sure you are using correct format: "{homeTeamName} {homeTeamScore} - {awayTeamName} {awayTeamScore}"'],
+                ['England', 0, '', 0, 'Cannot parse "awayTeamName". Please make sure you are using correct format: "{homeTeamName} {homeTeamScore} - {awayTeamName} {awayTeamScore}"'],
+                ['England', 0, 'France', '', 'Cannot parse "awayTeamScore". Please make sure you are using correct format: "{homeTeamName} {homeTeamScore} - {awayTeamName} {awayTeamScore}"'],
+            ])('it throw error that shows missing part and reminds required format', (homeTeamName, homeTeamScore, awayTeamName, awayTeamScore, expectedError: string) => {
                 const scoreboard = new ScoreBoard();
                 scoreboard.startMatch('England', 'France');
 
