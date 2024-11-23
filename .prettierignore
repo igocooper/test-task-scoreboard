@@ -1,0 +1,12 @@
+dist/
+coverage/
+docs/
+docs-theme/
+examples/
+.husky/
+**/*.md
+**/*.yml
+**/*.yaml
+**/*.json
+**/*.properties
+**/*.lock

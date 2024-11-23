@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "target": "ESNext",
+    "declaration": true,
+    "removeComments": true,
+    "strictPropertyInitialization": false,
+    "types": ["node", "jest"],
+    "outDir": "./dist",
+    "skipLibCheck": true,
+  },
+  "include": ["src/**/*", "@types/**/*"],
+}
