@@ -7,7 +7,7 @@ export class ScoreBoard {
     Match: typeof Match;
 
     constructor(match?: typeof Match) {
-        // we allow users to come with better hasing pattern for match ids as long as he implements Match interface
+        // we allow users to come with better hashing pattern for match ids as long as he implements Match interface
         this.Match = match || Match;
     }
 
@@ -46,7 +46,7 @@ export class ScoreBoard {
         this.liveMatches.delete(matchId);
     }
 
-    updateScore() {
+    updateScore(scoreInstruction: string) {
 
     }
 

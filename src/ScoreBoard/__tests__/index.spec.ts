@@ -67,6 +67,41 @@ describe('ScoreBoard', () => {
     });
 
     describe('updateScore', () => {
+        test('updates score', () => {
+            const scoreboard = new ScoreBoard();
+            scoreboard.startMatch('England', 'France');
+
+            scoreboard.updateScore('England 0 - France 1');
+
+            expect(scoreboard.liveMatches[0].homeTeam.score).toBe(0);
+            expect(scoreboard.liveMatches[0].awayTeam.score).toBe(1);
+        });
+
+        describe('when score instruction pattern is not recognised', () => {
+            test.each([
+                [undefined, 0, 'France', 0, 'Cannot parse "homeTeamName". Please make sure you are using correct format: "${homeTeamName} ${homeTeamScore} - ${awayTeamName} ${awayTeamScore}"'],
+                ['England', undefined, 'France', 0, 'Cannot parse "homeTeamScore". Please make sure you are using correct format: "${homeTeamName} ${homeTeamScore} - ${awayTeamName} ${awayTeamScore}"'],
+                ['England', 0, undefined, 0, 'Cannot parse "awayTeamName". Please make sure you are using correct format: "${homeTeamName} ${homeTeamScore} - ${awayTeamName} ${awayTeamScore}"'],
+                ['England', 0, 'France', undefined, 'Cannot parse "awayTeamScore". Please make sure you are using correct format: "${homeTeamName} ${homeTeamScore} - ${awayTeamName} ${awayTeamScore}"'],
+            ])('it throw error that shows missing part and reminds required format', (homeTeamName, homeTeamScore, awayTeamName, awayTeamScore, expectedError) => {
+                const scoreboard = new ScoreBoard();
+                scoreboard.startMatch('England', 'France');
+
+                expect(() => {
+                    scoreboard.updateScore(`${homeTeamName} ${homeTeamScore} - ${awayTeamName} ${awayTeamScore}`);
+                }).toThrow(expectedError);
+            });
+        });
+
+        describe('when match with selected teams is not found', () => {
+            test('it throw error', () => {
+                const scoreboard = new ScoreBoard();
+
+                expect(() => {
+                    scoreboard.updateScore('England 0 - France 1');
+                }).toThrow('No match with those teams was started yet.');
+            });
+        });
 
     });
 
